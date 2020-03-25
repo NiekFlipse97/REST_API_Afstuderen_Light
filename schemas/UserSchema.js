@@ -19,7 +19,7 @@ const UserSchema = new Schema({
         type: Date,
         required: [true, 'Date of birth is required']
     },
-    friends: [this.UserSchema],
+    friends: [this],
     posts: [PostSchema.PostSchema]
 });
 

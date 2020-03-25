@@ -11,3 +11,7 @@ const PostSchema = new Schema({
         required: [true, 'Description is required']
     }
 });
+
+const Post = mongoose.model('post', PostSchema);
+
+module.exports = {Post, PostSchema}
