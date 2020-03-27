@@ -40,10 +40,8 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.use(cors());
-//
+
 app.use('/api/users', require('./routes/users'));
-// app.use('/api/products', require('./routes/products'));
-// app.use('/api/orders', require('./routes/order'));
 
 app.listen(port, function () {
     console.log('http://localhost:', port)
