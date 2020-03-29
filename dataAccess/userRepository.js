@@ -15,10 +15,15 @@ class UserRepository {
 
                         newUser.save()
                             .then(user => {
-                                resolve({status: 201, msg: "User created"})
+                                resolve({status: 201, msg: "User created", userId: user._id})
                             })
-                            .catch(() => {
-                                reject({status: internalServerError.code, error: internalServerError})
+                            .catch((error) => {
+                                console.log(error);
+                                reject({
+                                    status: internalServerError.code,
+                                    error: internalServerError,
+                                    hier: "Hier gaat het fout"
+                                })
                             })
                     } else {
                         const userExists = ApiErrors.userExists();
@@ -34,6 +39,19 @@ class UserRepository {
     static getAllUsers() {
         return new Promise((resolve, reject) => {
             User.find()
+                .populate('posts')
+                .populate({
+                    path: 'friends',
+                    populate: {
+                        path: 'friends',
+                        populate: {
+                            path: 'friends',
+                            populate: {
+                                path: 'posts',
+                            }
+                        }
+                    }
+                })
                 .then(users => {
                     resolve({status: 200, users})
                 })
@@ -43,6 +61,30 @@ class UserRepository {
         })
     }
 
+    static addFriend(userId, friendId) {
+        console.log(userId, friendId);
+        return new Promise((resolve, reject) => {
+            User.findOne({_id: userId})
+                .then(user => {
+                    if (user && friendId !== userId) {
+                        user.friends.push(friendId);
+
+                        user.save()
+                            .then(user => {
+                                resolve({status: 200, message: 'Friend added', user})
+                            })
+                            .catch(error => {
+                                reject({status: ApiErrors.internalServerError().code, error})
+                            })
+                    } else {
+                        reject({status: 420, error: ApiErrors.userDoesNotExist(), or: 'Userid is the same as friendid'})
+                    }
+                })
+                .catch(error => {
+                    reject({status: ApiErrors.internalServerError().code, error})
+                })
+        })
+    }
 }
 
 module.exports = UserRepository;

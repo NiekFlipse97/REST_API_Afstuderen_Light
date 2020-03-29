@@ -12,7 +12,7 @@ mongoose.set('useFindAndModify', false);
 
 // mongoose.connect('mongodb://localhost/' + config.dbName, {useNewUrlParser: true});
 // if (process.env.NODE_ENV == 'testCloud' || process.env.NODE_ENV == 'production') {
-mongoose.connect(config.connectionString, {
+mongoose.connect(config.v2ConnectionString, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -42,6 +42,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use('/api/users', require('./routes/users'));
+app.use('/api/posts', require('./routes/posts'));
 
 app.listen(port, function () {
     console.log('http://localhost:', port)

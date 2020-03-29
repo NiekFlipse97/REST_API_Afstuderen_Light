@@ -1,18 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const UserRepository = require('../dataAccess/userRepository');
+const {getResponse} = require('../globalfunctions');
 
 router.get('/', (req, res) => {
-    UserRepository.getAllUsers()
-        .then(repoObject => {
-            res.status(repoObject.status).json(repoObject)
-        })
-        .catch(repoObject => {
-            res.status(repoObject.status).json(repoObject)
-        })
+    getResponse(UserRepository.getAllUsers(), res)
 });
 
-router.post('/', ((req, res) => {
+router.post('/', (req, res) => {
     const email = req.body.email || '';
     const password = req.body.password || '';
     const name = req.body.name || '';
@@ -20,13 +15,14 @@ router.post('/', ((req, res) => {
     const friends = req.body.friends || [];
     const posts = req.body.posts || [];
 
-    UserRepository.createUser(email, password, name, dob, friends, posts)
-        .then(repoObject => {
-            res.status(repoObject.status).json(repoObject);
-        })
-        .catch(repoObject => {
-            res.status(repoObject.status).json(repoObject);
-        });
-}));
+    getResponse(UserRepository.createUser(email, password, name, dob, friends, posts), res)
+});
 
-module.exports = router
+router.put('/:userId', (req, res) => {
+    const userId = req.params.userId || '';
+    const friendId = req.body.friendId || '';
+
+    getResponse(UserRepository.addFriend(userId, friendId), res)
+});
+
+module.exports = router;
