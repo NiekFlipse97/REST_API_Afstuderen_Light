@@ -41,13 +41,13 @@ class UserRepository {
             User.find()
                 .populate('posts')
                 .populate({
-                    path: 'friends',
+                    path: 'friends posts',
                     populate: {
-                        path: 'friends',
+                        path: 'friends posts',
                         populate: {
-                            path: 'friends',
+                            path: 'friends posts',
                             populate: {
-                                path: 'posts',
+                                path: 'friends posts'
                             }
                         }
                     }
