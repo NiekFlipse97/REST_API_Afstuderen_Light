@@ -1,4 +1,4 @@
-const {User} = require('../schemas/UserSchema');
+const { User } = require('../schemas/UserSchema');
 const ApiErrors = require('../errorMessages/apiErrors');
 
 const internalServerError = ApiErrors.internalServerError();
@@ -6,7 +6,7 @@ const internalServerError = ApiErrors.internalServerError();
 class UserRepository {
     static createUser(email, password, name, dob, friends, posts) {
         return new Promise(((resolve, reject) => {
-            User.findOne({email})
+            User.findOne({ email })
                 .then(user => {
                     if (user === null) {
                         const newUser = new User({
@@ -15,7 +15,7 @@ class UserRepository {
 
                         newUser.save()
                             .then(user => {
-                                resolve({status: 201, msg: "User created", userId: user._id})
+                                resolve({ status: 201, msg: "User created", userId: user._id })
                             })
                             .catch((error) => {
                                 console.log(error);
@@ -27,11 +27,11 @@ class UserRepository {
                             })
                     } else {
                         const userExists = ApiErrors.userExists();
-                        reject({status: userExists.code, error: userExists})
+                        reject({ status: userExists.code, error: userExists })
                     }
                 })
                 .catch(() => {
-                    reject({status: internalServerError.code, error: internalServerError});
+                    reject({ status: internalServerError.code, error: internalServerError });
                 })
         }))
     }
@@ -53,10 +53,10 @@ class UserRepository {
                     }
                 })
                 .then(users => {
-                    resolve({status: 200, users})
+                    resolve({ status: 200, users })
                 })
                 .catch(error => {
-                    reject({status: error.code, error})
+                    reject({ status: error.code, error })
                 })
         })
     }
@@ -64,25 +64,37 @@ class UserRepository {
     static addFriend(userId, friendId) {
         console.log(userId, friendId);
         return new Promise((resolve, reject) => {
-            User.findOne({_id: userId})
+            User.findOne({ _id: userId })
                 .then(user => {
                     if (user && friendId !== userId) {
                         user.friends.push(friendId);
 
                         user.save()
                             .then(user => {
-                                resolve({status: 200, message: 'Friend added', user})
+                                resolve({ status: 200, message: 'Friend added', user })
                             })
                             .catch(error => {
-                                reject({status: ApiErrors.internalServerError().code, error})
+                                reject({ status: ApiErrors.internalServerError().code, error })
                             })
                     } else {
-                        reject({status: 420, error: ApiErrors.userDoesNotExist(), or: 'Userid is the same as friendid'})
+                        reject({ status: 420, error: ApiErrors.userDoesNotExist(), or: 'Userid is the same as friendid' })
                     }
                 })
                 .catch(error => {
-                    reject({status: ApiErrors.internalServerError().code, error})
+                    reject({ status: ApiErrors.internalServerError().code, error })
                 })
+        })
+    }
+
+    static deleteUser(userId) {
+        return new Promise((resolve, reject) => {
+            User.findOneAndDelete({ "_id": userId })
+                .then(user => {
+                    resolve({ status: 200, user })
+                })
+                .catch(error => {
+                    reject({ status: error.code, error })
+                });
         })
     }
 }

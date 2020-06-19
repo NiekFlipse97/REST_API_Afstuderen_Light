@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UserRepository = require('../dataAccess/userRepository');
-const {getResponse} = require('../globalfunctions');
+const { getResponse } = require('../globalfunctions');
 
 router.get('/', (req, res) => {
     getResponse(UserRepository.getAllUsers(), res)
@@ -24,5 +24,11 @@ router.put('/:userId', (req, res) => {
 
     getResponse(UserRepository.addFriend(userId, friendId), res)
 });
+
+router.delete('/:userId', (req, res) => {
+    const userId = req.params.userId || '';
+
+    getResponse(UserRepository.deleteUser(userId), res)
+})
 
 module.exports = router;
